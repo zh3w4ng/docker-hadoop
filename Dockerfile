@@ -2,7 +2,7 @@
 # Dockerfile - Apache Hadoop
 #
 FROM     ubuntu:14.04
-MAINTAINER Yongbok Kim <ruo91@yongbok.net>
+MAINTAINER Zhe Wang <zh3w4ng@gmail.com>
 
 # Last Package Update & Install
 RUN apt-get update && apt-get install -y curl supervisor openssh-server net-tools iputils-ping nano
@@ -36,6 +36,7 @@ ENV HADOOP_COMMON_HOME $HADOOP_PREFIX
 ENV HADOOP_HDFS_HOME $HADOOP_PREFIX
 ENV YARN_HOME $HADOOP_PREFIX
 RUN echo '# Hadoop' >> /etc/profile \
+ && echo "export HADOOP_HOME=$HADOOP_PREFIX" >> /etc/profile \
  && echo "export HADOOP_PREFIX=$HADOOP_PREFIX" >> /etc/profile \
  && echo 'export PATH=$PATH:$HADOOP_PREFIX/bin:$HADOOP_PREFIX/sbin' >> /etc/profile \
  && echo 'export HADOOP_MAPRED_HOME=$HADOOP_PREFIX' >> /etc/profile \
@@ -50,12 +51,29 @@ ADD conf/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
 ADD conf/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
 RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/local/jdk:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
 
+# Apache Hive
+ENV HIVE_URL http://archive.apache.org/dist/hive
+ENV HIVE_VERSION hive-1.0.0
+RUN cd $SRC_DIR && curl -LO "$HIVE_URL/$HIVE_VERSION/apache-$HIVE_VERSION-bin.tar.gz" \
+ && tar xzf apache-$HIVE_VERSION-bin.tar.gz ; rm -f apache-$HIVE_VERSION-bin.tar.gz
+
+# Hive ENV
+ENV HIVE_PREFIX $SRC_DIR/$HIVE_VERSION
+ENV HIVE_HOME $HIVE_PREFIX
+ENV PATH $PATH:$HIVE_PREFIX/bin:$HIVE_PREFIX/sbin
+RUN echo '# HIVE' >> /etc/profile \
+ && echo "export HIVE_HOME=$HIVE_PREFIX" >> /etc/profile \
+ && echo 'export PATH=$PATH:$HIVE_PREFIX/bin:$HIVE_PREFIX/sbin' >> /etc/profile \
+
 # SSH keygen
 RUN cd /root && ssh-keygen -t dsa -P '' -f "/root/.ssh/id_dsa" \
  && cat /root/.ssh/id_dsa.pub >> /root/.ssh/authorized_keys && chmod 644 /root/.ssh/authorized_keys
 
 # Name node foramt
 RUN hdfs namenode -format
+
+# RUN hdfs dfs -mkdir -p /user/hive/warehouse
+# RUN hdfs dfs -chmod g+w /user/hive/warehouse
 
 # Supervisor
 RUN mkdir -p /var/log/supervisor

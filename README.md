@@ -1,27 +1,26 @@
 # Apache Hadoop 2.x - Pseudo-Distributed Mode
 **- Container run**
 
-    root@ruo91:~# docker run -d --name="hadoop" -h "hadoop" \
-    -p 8042:8042 -p 8088:8088 -p 50070:50070 -p 50075:50075 -p 50090:50090 ruo91/hadoop:2.7.x
+    root@zhewang:~# docker run -d --name="hadoop" -h "hadoop" \
+    -p 8042:8042 -p 8088:8088 -p 50070:50070 -p 50075:50075 -p 50090:50090 zh3w4ng/hadoop:2.7.1
 or
 
 **- Build**
 
-    root@ruo91:~# git clone https://github.com/ruo91/docker-hadoop.git /opt/docker-hadoop
-    root@ruo91:~# cd /opt/docker-hadoop
-    root@ruo91:~# git checkout -b 2.7.x origin/2.7.x
-    root@ruo91:~# docker build --rm -t hadoop:2.7.x /opt/docker-hadoop
+    root@zhewang:~# git clone https://github.com/zh3w4ng/docker-hadoop.git /opt/docker-hadoop
+    root@zhewang:~# cd /opt/docker-hadoop
+    root@zhewang:~# docker build --rm -t hadoop:2.7.1 /opt/docker-hadoop
 
 **- Container run**
 
-    root@ruo91:~# docker run -d --name="hadoop" -h "hadoop" \
-    -p 8042:8042 -p 8088:8088 -p 50070:50070 -p 50075:50075 -p 50090:50090 hadoop:2.7.x
+    root@zhewang:~# docker run -d --name="hadoop" -h "hadoop" \
+    -p 8042:8042 -p 8088:8088 -p 50070:50070 -p 50075:50075 -p 50090:50090 hadoop:2.7.1
 
 **- SSH login**
 
 root password : hadoop
 
-    root@ruo91:~# ssh `docker inspect -f '{{ .NetworkSettings.IPAddress }}' hadoop`
+    root@zhewang:~# ssh `docker inspect -f '{{ .NetworkSettings.IPAddress }}' hadoop`
 
 **- Hadoop run**
 
