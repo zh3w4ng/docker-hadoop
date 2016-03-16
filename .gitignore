@@ -1,0 +1,4 @@
+.DS_STORE
+vendor/*hive*
+vendor/*tomcat*
+vendor/*hadoop*
